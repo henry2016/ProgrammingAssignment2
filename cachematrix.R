@@ -105,27 +105,14 @@ cacheSolve <- function(x, ...) {
 #----------------------------------------------------------------------------------
 # Test data
 # 
-# Consisting of a simple 3 x 3 matrix and its exact inverse.
+# Consisting of a simple 3 x 3 matrix, its exact inverse, and an identity matrix.
 #
-# The test data came from matrices shown online at:
+# The data for the matrix and inverse came from:
 #   http://www.purplemath.com/modules/mtrxinvr2.htm
 #
 matrixA <- matrix(c(1,2,3, 0,1,4, 5,6,0), nrow = 3, ncol = 3, byrow = TRUE )
 inverseOfA <- matrix(c(-24,18,5, 20,-15,-4, -5,4,1), nrow = 3, ncol = 3, byrow = TRUE )
-
-#----------------------------------------------------------------------------------
-# identityMatrix
-#
-# An original one-liner that creates an identity matrix with a given number of rows.
-#
-# Example:
-#   > identityMatrix(3)
-#        [,1] [,2] [,3]
-#   [1,]    1    0    0
-#   [2,]    0    1    0
-#   [3,]    0    0    1
-# 
-identityMatrix <- function( x ) matrix( as.integer(((1:(x*x)) %% (x+1)) == 1), nrow = x, ncol = x, byrow = TRUE)
+identityMatrix3x3 = diag(3)
 
 #-----------------------------------------------------------------------------
 # unitTest
@@ -145,7 +132,7 @@ unitTest <- function(){
   # check the results
   if( isTRUE( all.equal( matrixInverseInstance1, inverseOfA ) ) &&
       isTRUE( all.equal( matrixInverseInstance1, matrixInverseInstance2 ) ) &&
-      isTRUE ( all.equal( (matrixA %*% matrixInverseInstance1), identityMatrix(3) ) )
+      isTRUE ( all.equal( (matrixA %*% matrixInverseInstance1), identityMatrix3x3 ) )
     )
   {
     message( "Unit testing passed.")
