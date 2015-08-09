@@ -14,7 +14,7 @@
 ## This version of cachematrix.R fleshes out those function prototypes, making
 ## them work, and adding a unit test.  It was initally created on 7-AUG-2015
 ## by Henry2016.
-## 
+##
 ##
 
 
@@ -51,33 +51,41 @@
 #
 #-------------------------------------------------------------------------------
 makeCacheMatrix <- function(m.d = matrix()) {
-  # Cached Data --------
-  # m.d caches the matrix's data.
-  # m.i caches the matrix's inverse.
-  m.i <- NULL
-  
-  # Function to store matrix data  --------
-  set <- function(new.m.d) {
-    m.d <<- new.m.d  # Sets the matrix data
-    m.i <<- NULL
-  }
-  
-  # Function to get cached matrix data  --------
-  get <- function() m.d
-  
-  # Function to cache the matrix inversion  --------
-  setInv <- function(inv) m.i <<- inv
-  
-  # Function to get the cached the matrix inversion  --------
-  getInv <- function() m.i
-  
-  # A list of functions providing an interface to the CacheMatrix:
-  funcList <- list(set = set,
-                   get = get,
-                   setInv = setInv,
-                   getInv = getInv)
-  
-  return( funcList )
+    # Cached Data --------
+    # m.d caches the matrix's data.
+    # m.i caches the matrix's inverse.
+    m.i <- NULL
+
+    # Function to store matrix data  --------
+    set <- function(new.m.d) {
+        m.d <<- new.m.d  # Sets the matrix data
+        m.i <<- NULL
+    }
+
+    # Function to get cached matrix data  --------
+    get <- function(){
+        m.d
+    }
+
+    # Function to cache the matrix inversion  --------
+    setInv <- function(inv){
+        m.i <<- inv
+    }
+
+    # Function to get the cached the matrix inversion  --------
+    getInv <- function(){
+        m.i
+    }
+
+    # A list of functions providing an interface to the CacheMatrix:
+    funcList <- list(
+        set = set,
+        get = get,
+        setInv = setInv,
+        getInv = getInv
+    )
+
+    return(funcList)
 }
 
 #-------------------------------------------------------------------------------
@@ -91,40 +99,47 @@ makeCacheMatrix <- function(m.d = matrix()) {
 #
 #-------------------------------------------------------------------------------
 cacheSolve <- function(x, ...) {
+    # Get the inverse matrix result from cache, if it's available.
+    xInverseResult = x$getInv()
 
-  # Get the inverse matrix result from cache, if it's available.
-  xInverseResult = x$getInv()
-  
-  # If it wasn't available ...
-  if (!is.matrix(xInverseResult)){
-    # compute it,
-    xInverseResult <- solve(x$get())
-    # and save the result to cache.
-    x$setInv( xInverseResult )
-  }
-  
-  return(xInverse)
+    # If it wasn't available ...
+    if (!is.matrix(xInverseResult)) {
+        # compute it,
+        xInverseResult <- solve(x$get())
+        # and save the result to cache.
+        x$setInv(xInverseResult)
+    }
+
+    return(xInverse)
 }
 
 #-------------------------------------------------------------------------------
 #
 # Test data
-# 
+#
 # Consisting of a simple 3 x 3 matrix, its exact inverse, and an identity matrix.
 #
 # The data for the matrix and inverse came from:
 #   http://www.purplemath.com/modules/mtrxinvr2.htm
 #
 #-------------------------------------------------------------------------------
-matA <- matrix(c(1,2,3, 0,1,4, 5,6,0), 
-               nrow = 3, 
-               ncol = 3, 
-               byrow = TRUE)
+matA <- matrix(
+    c(1, 2, 3,
+      0, 1, 4,
+      5, 6, 0),
+    nrow = 3,
+    ncol = 3,
+    byrow = TRUE
+)
 
-inverseOfA <- matrix(c(-24,18,5, 20,-15,-4, -5,4,1), 
-                     nrow = 3, 
-                     ncol = 3, 
-                     byrow = TRUE)
+inverseOfA <- matrix(
+    c(-24, 18, 5,
+      20, -15,-4,
+      -5,   4, 1),
+    nrow = 3,
+    ncol = 3,
+    byrow = TRUE
+)
 
 identityMatrix3x3 = diag(3)
 
@@ -140,17 +155,17 @@ identityMatrix3x3 = diag(3)
 #   Unit testing passed.
 #
 #-------------------------------------------------------------------------------
-unitTest <- function(){
-  cm = makeCacheMatrix( matA )       # Creates a cachematrix from matrix matA
-  matrixInverse1 = cacheSolve( cm )  # Computes and stores its inverse
-  matrixInverse2 = cacheSolve( cm )  # Gets a cached copy of its inverse
-  
-  # check the results
-  if (isTRUE( all.equal(matrixInverse1, inverseOfA) ) &&
-      isTRUE( all.equal(matrixInverse1, matrixInverse2) ) &&
-      isTRUE( all.equal((matA %*% matrixInverse1), identityMatrix3x3) )){
-    message("Unit testing passed.")
-  } else {
-    message("Unit testing failed.")
-  }
+unitTest <- function() {
+    cm = makeCacheMatrix(matA)       # Creates a cachematrix from matrix matA
+    matrixInverse1 = cacheSolve(cm)  # Computes and stores its inverse
+    matrixInverse2 = cacheSolve(cm)  # Gets a cached copy of its inverse
+
+    # check the results
+    if (isTRUE(all.equal(matrixInverse1, inverseOfA)) &&
+        isTRUE(all.equal(matrixInverse1, matrixInverse2)) &&
+        isTRUE(all.equal((matA %*% matrixInverse1), identityMatrix3x3))) {
+        message("Unit testing passed.")
+    } else {
+        message("Unit testing failed.")
+    }
 }
