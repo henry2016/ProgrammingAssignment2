@@ -72,7 +72,7 @@ makeCacheMatrix <- function(m.d = matrix()) {
         m.i <<- inv
     }
 
-    # Function to get the cached the matrix inversion  --------
+    # Function to get the cached version of the matrix inversion  --------
     getInv <- function(){
         m.i
     }
@@ -110,12 +110,12 @@ cacheSolve <- function(x, ...) {
         x$setInv(xInverseResult)
     }
 
-    return(xInverse)
+    return(xInverseResult)
 }
 
 #-------------------------------------------------------------------------------
 #
-# Test data
+# Test data for unitTest()
 #
 # Consisting of a simple 3 x 3 matrix, its exact inverse, and an identity matrix.
 #
